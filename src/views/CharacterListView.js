@@ -1,8 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-
+import { fetchFolk } from "../actions";
 import { CharacterList } from "../components";
-// import actions
 
 class CharacterListView extends React.Component {
   constructor() {
@@ -10,12 +9,13 @@ class CharacterListView extends React.Component {
   }
 
   componentDidMount() {
-    // call our action
+    this.props.fetchFolk();
   }
 
   render() {
-    if (this.props.fetching) {
+    if (this.props.fetchingPeople) {
       // return something here to indicate that you are fetching data
+      return (<h1>Please wait, loading data...</h1>)
     }
     return (
       <div className="CharactersList_wrapper">
@@ -25,11 +25,13 @@ class CharacterListView extends React.Component {
   }
 }
 
-// our mapStateToProps needs to have two properties inherited from state
-// the characters and the fetching boolean
-export default connect(
-  null /* mapStateToProps replaces null here */,
-  {
-    /* action creators go here */
-  }
-)(CharacterListView);
+const mapStateToProps = state => {
+  return {
+    // our state machine is working for us based on fetching, success, and error. lets make sure our component knows about the state machine
+    characters: state.charsReducer.characters,
+    error: state.charsReducer.error, // error for when we mispell something!
+    fetchingPeople: state.charsReducer.fetchingPeople // pending state, the fetching spinner or loading message etc. for when we're fetching!
+  };
+};
+
+export default connect(mapStateToProps, { fetchFolk })(CharacterListView);
